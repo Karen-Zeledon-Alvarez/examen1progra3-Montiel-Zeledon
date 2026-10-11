@@ -8,13 +8,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class CreateUser extends JFrame{
+public class CreateUserView extends JFrame{
     
     JPanel panel;
-    public JButton btnAddBook;
+    public JButton btnCreateUser, btnReturn;
     public JTextField txtUsername, txtEmail;
     
-    public CreateUser(){
+    public CreateUserView(){
         
         createWindow();
         createPanel();
@@ -52,10 +52,10 @@ public class CreateUser extends JFrame{
         lbBName.setFont(new Font("Times New Roman", 3, 18));
         panel.add(lbBName);
         
-        JLabel lbBCode = new JLabel("Email");
-        lbBCode.setBounds(150, 250, 150, 30);
-        lbBCode.setFont(new Font("Times New Roman", 3, 18));
-        panel.add(lbBCode);
+        JLabel lbBEMail = new JLabel("Email");
+        lbBEMail.setBounds(150, 250, 150, 30);
+        lbBEMail.setFont(new Font("Times New Roman", 3, 18));
+        panel.add(lbBEMail);
     }
     
     private void createTextFields(){
@@ -71,8 +71,12 @@ public class CreateUser extends JFrame{
     
     private void createButton(){
     
-        btnAddBook = new JButton("Create Username");
-        btnAddBook.setBounds(115, 350, 150, 30);
-        panel.add(btnAddBook);
+        btnCreateUser = new JButton("Create Username");
+        btnCreateUser.setBounds(115, 350, 150, 30);
+        panel.add(btnCreateUser);
+        
+        btnReturn = new JButton("Return");
+        btnReturn.setBounds(10, 10, 100, 30);
+        panel.add(btnReturn);
     }
 }

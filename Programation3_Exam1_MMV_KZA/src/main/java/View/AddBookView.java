@@ -7,13 +7,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class AddBook extends JFrame{
+public class AddBookView extends JFrame{
     
     JPanel panel;
-    public JButton btnAddBook;
+    public JButton btnAddBook, btnReturn;
     public JTextField txtISBN, txtTitulo, txtAutor, txtAnio;
     
-    public AddBook(){
+    public AddBookView(){
         
         createWindow();
         createPanel();
@@ -91,5 +91,9 @@ public class AddBook extends JFrame{
         btnAddBook = new JButton("Add Book");
         btnAddBook.setBounds(115, 510, 150, 30);
         panel.add(btnAddBook);
+        
+        btnReturn = new JButton("Return");
+        btnReturn.setBounds(10, 10, 100, 30);
+        panel.add(btnReturn);
     }
 }

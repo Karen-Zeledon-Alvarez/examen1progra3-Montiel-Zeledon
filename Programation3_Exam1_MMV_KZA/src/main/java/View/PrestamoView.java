@@ -12,17 +12,17 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class Prestamo extends JFrame{
+public class PrestamoView extends JFrame{
     
     JPanel panel;
-    public JButton btnAddBook;
+    public JButton btnAddBook, btnReturn;
     public JTextField txtBCode;
     //public JCalendar calendar;
     public JDateChooser prestamoDate, limiteDate, devolucionDate;
     public JRadioButton dButton, ndButton;
     public ButtonGroup buttonGroup;
     
-    public Prestamo(){
+    public PrestamoView(){
         
         createWindow();
         createPanel();
@@ -77,7 +77,7 @@ public class Prestamo extends JFrame{
         lbBRDate.setFont(new Font("Times New Roman", 3, 18));
         panel.add(lbBRDate);
         
-        JLabel lbBState= new JLabel("Return Date");
+        JLabel lbBState= new JLabel("State");
         lbBState.setBounds(130, 500, 150, 30);
         lbBState.setFont(new Font("Times New Roman", 3, 18));
         panel.add(lbBState);
@@ -129,5 +129,9 @@ public class Prestamo extends JFrame{
         btnAddBook = new JButton("Add Loan");
         btnAddBook.setBounds(115, 650, 150, 30);
         panel.add(btnAddBook);
+        
+        btnReturn = new JButton("Return");
+        btnReturn.setBounds(10, 10, 100, 30);
+        panel.add(btnReturn);
     }
 }

@@ -13,8 +13,8 @@ public class BDConnection {
     public static String password = "Z8h0KB5km(";
 
     public Connection connection_;
-    PreparedStatement ps;
-    ResultSet rs;
+    public PreparedStatement ps;
+    public ResultSet rs;
     
     public BDConnection(){Connection _connection = getConnection();}
     

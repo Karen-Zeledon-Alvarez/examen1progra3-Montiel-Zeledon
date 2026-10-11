@@ -1,9 +1,11 @@
 package Main;
 
+import Controller.LibraryController;
 import DataBaseConnection.BDConnection;
-import View.AddBook;
-import View.CreateUser;
-import View.Prestamo;
+import View.AddBookView;
+import View.CreateUserView;
+import View.LibraryView;
+import View.PrestamoView;
 
 public class Main {
 
@@ -12,6 +14,8 @@ public class Main {
         new BDConnection();
         //new AddBook();
         //new CreateUser();
-        new Prestamo();
+        //new Prestamo();
+        //new LibraryView();
+        new LibraryController();
     }
 }
