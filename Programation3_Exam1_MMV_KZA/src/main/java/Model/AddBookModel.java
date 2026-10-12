@@ -2,17 +2,27 @@ package Model;
 
 public class AddBookModel {
   
-    private String bookName, bookCode, bookAuthor, bookYear;
+    private String bookName, bookCode, bookAuthor;
+    private int bookYear;
+    
+    public AddBookModel(){}
+    
+    public AddBookModel(String bookCode, String bookName, String bookAuthor, int bookYear) {
+        this.bookCode = bookCode;
+        this.bookName = bookName;
+        this.bookAuthor = bookAuthor;
+        this.bookYear = bookYear;
+    }
  
-    public void setbookName(String bookName_){bookName = bookName_;}
+    public void setbookName(String bookName_){this.bookName = bookName_;}
     public String getbookName(){return bookName;}
     
-    public void setbookCode(String bookCode_){bookCode = bookCode_;}
+    public void setbookCode(String bookCode_){this.bookCode = bookCode_;}
     public String getbookCode(){return bookCode;}
     
-    public void setbookAuthor(String bookAuthor_){bookAuthor = bookAuthor_;}
+    public void setbookAuthor(String bookAuthor_){this.bookAuthor = bookAuthor_;}
     public String getbookAuthor(){return bookAuthor;}
     
-    public void setbookYear(String bookYear_){bookCode = bookYear_;}
-    public String getbookYear(){return bookYear;}
+    public void setbookYear(int bookYear_){this.bookYear = bookYear_;}
+    public int getbookYear(){return bookYear;}
 }

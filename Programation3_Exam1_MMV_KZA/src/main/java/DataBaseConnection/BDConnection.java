@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class BDConnection {
@@ -16,7 +17,11 @@ public class BDConnection {
     public PreparedStatement ps;
     public ResultSet rs;
     
+    public static Connection conectar() throws SQLException {
+        return DriverManager.getConnection(URL, user, password);
+    }
     public BDConnection(){Connection _connection = getConnection();}
+    
     
     public Connection getConnection(){
     
