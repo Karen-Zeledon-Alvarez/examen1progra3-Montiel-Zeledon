@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Persistence;
 
 import DataBaseConnection.BDConnection;
@@ -26,14 +22,9 @@ public class prestamoDAO {
     usuarioDAO usuario=new usuarioDAO();
     ejemplarDAO ejemplar=new ejemplarDAO();
     
-    public boolean AgregarPrestamo(PrestamoModel p) {
+    public void AgregarPrestamo(PrestamoModel p) {
 
-        String sql = "INSERT INTO \"prestamo\" "
-                + "(\"id\", \"ejemplar_codigo\", "
-                + "\"usuario_id\", \"estado\","
-                + "\"fecha_prestamo\",\"fecha_limite\","
-                + "(\"fecha_devolucion\" ) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO prestamo (id, ejemplar_codigo, usuario_id, estado, fecha_prestamo, fecha_limite, fecha_devolucion) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = BDConnection.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -47,42 +38,43 @@ public class prestamoDAO {
             ps.setDate(7, p.getReturnDate());
             
 
-            ps.executeUpdate();
+            int result = ps.executeUpdate();
 
-            return true;
+            if(result > 0){System.out.println("Loan Successfully Added");}
+            //return true;
 
         } catch (Exception e) {
 
             System.out.println("Error al guardar el prestamo");
             e.printStackTrace();
 
-            return false;
+            //return false;
         }
     }
-    public boolean BorrarPrestamo(int prestamoCode) throws SQLException {
+    public void BorrarPrestamo(int prestamoCode) throws SQLException {
         
-        String sql = "DELETE FROM \"prestamo\" WHERE \"id\" = ?";
+        String sql = "DELETE FROM prestamo WHERE id = ?";
         
         try (Connection conn = BDConnection.conectar();
               PreparedStatement ps = conn.prepareStatement(sql)){               
                                           
             ps.setInt(1, prestamoCode);
             int filas = ps.executeUpdate();
-            return filas > 0;
             
+            if(filas > 0){System.out.println("Loan Successfully Deleted.");}
+            //return filas > 0;
         }
          catch(Exception e){
             System.out.println("Error al intentar borrar el prestamo" + e.getMessage());
             e.printStackTrace();
-             return false;
+            //return false;
          }
         
     }
     
-    public boolean ModificarPrestamo(PrestamoModel p) throws SQLException{
+    public void ModificarPrestamo(PrestamoModel p) throws SQLException{
         
-        String sql = "UPDATE \"prestamo\" SET \"ejemplar_codigo\" = ?, \"usuario_id\" = ?, \"estado\" = ?, \"fecha_prestamo\" = ?, \"fecha_limite\" = ?, \"fecha_devolucion\" = ? "
-                   + "WHERE \"id\" = ?";
+        String sql = "UPDATE prestamo SET ejemplar_codigo = ?, usuario_id = ?, estado = ?, fecha_prestamo = ?, fecha_limite = ?, fecha_devolucion = ? WHERE id = ?";
         
         try(Connection conn = BDConnection.conectar();
                 
@@ -97,12 +89,13 @@ public class prestamoDAO {
            
             
             int filas = ps.executeUpdate();
-            return filas > 0;
+            if(filas > 0){System.out.println("Loan Successfully updated.");}
+            //return filas > 0;
               
            }catch(SQLException e){
             System.out.println("Ocurrio un error al actualizar el prestamo,  porfavor intente de nuevo" + e.getMessage());
             e.printStackTrace();
-            return false;
+            //return false;
         }
     }
     
@@ -110,13 +103,8 @@ public class prestamoDAO {
 
         List<PrestamoModel> lista = new ArrayList<>();
 
-        String sql = "SELECT  \"id\",\"ejemplar_codigo\",\"usuario_id\",\"estado\", "
-                + "\"fecha_prestamo\", \"fecha_limite\", \"fecha_devolucion\", "
-                + "FROM \"prestamo\" "
-                + "WHERE CAST(\"id\") AS TEXT) LIKE ? "
-                + "OR CAST(\"ejemplar_codigo\" AS TEXT) LIKE ?"
-                + "OR CAST(\"usuario_id\" AS TEXT) LIKE ? "
-                + "OR LOWER(\"estado\") LIKE LOWER(?)";
+        String sql = "SELECT id, ejemplar_codigo, usuario_id, estado, fecha_prestamo, fecha_limite, fecha_devolucion FROM prestamo WHERE"
+                + " CAST(id AS CHAR) LIKE ? OR CAST(ejemplar_codigo AS CHAR) LIKE ? OR CAST(usuario_id AS CHAR) LIKE ? OR LOWER(estado) LIKE LOWER(?)";
 
         try (Connection conn = BDConnection.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -129,21 +117,17 @@ public class prestamoDAO {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
+                
                 int User=rs.getInt("usuario_id");
                 CreateUserModel user=usuario.ObtenerUsuario(User);
                 String book=rs.getString("ejemplar_codigo");
                 BookManager libro=ejemplar.ObtenerEjemplar(book);
                 PrestamoModel p = new PrestamoModel();
 
-                p.setPrestamoCode(
-                        rs.getInt("id"));
-
+                p.setPrestamoCode(rs.getInt("id"));
                 p.setBookCode(libro);
-
                 p.setUserCode(user);
-
-               p.setState(
-                        rs.getString("estado"));
+                p.setState(rs.getString("estado"));
 
                 lista.add(p);
             }
@@ -159,28 +143,30 @@ public class prestamoDAO {
 
     
     public PrestamoModel ObtenerPrestamo(int prestamoCode){
-        String sql = "SELECT \"id\", \"ejemplar_codigo\", \"usuario_id\",\"estado\", \"fecha_prestamo\", \"fecha_limite\", \"fecha_devolucion\" "
-                   + "FROM \"prestamo\" WHERE \"id\" = ?";
+        String sql = "SELECT id, ejemplar_codigo, usuario_id, estado, fecha_prestamo, fecha_limite, fecha_devolucion FROM prestamo WHERE id = ?";
         
         try(Connection conn = BDConnection.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
+            
            ps.setInt(1, prestamoCode);
+           
             try (ResultSet rs=ps.executeQuery()){
+                
                 if (rs.next()){
-                    int User=rs.getInt("usuario_id");
-                CreateUserModel user=usuario.ObtenerUsuario(User);
-                String book=rs.getString("ejemplar_codigo");
-                BookManager libro=ejemplar.ObtenerEjemplar(book);
-                return new PrestamoModel(
-                    rs.getInt("id"),
-                    libro,
-                    user,
-                    rs.getString("estado"),
-                    rs.getDate("fecha_prestamo"),
-                    rs.getDate("fecha_limite"),
-                    rs.getDate("fecha_devolucion")
                     
-                           );
+                    int User=rs.getInt("usuario_id");
+                    CreateUserModel user=usuario.ObtenerUsuario(User);
+                    String book=rs.getString("ejemplar_codigo");
+                    BookManager libro=ejemplar.ObtenerEjemplar(book);
+                
+                    return new PrestamoModel(
+                        rs.getInt("id"),
+                        libro,
+                        user,
+                        rs.getString("estado"),
+                        rs.getDate("fecha_prestamo"),
+                        rs.getDate("fecha_limite"),
+                        rs.getDate("fecha_devolucion"));
                     }
                 }
  

@@ -51,6 +51,7 @@ public class LibraryView extends JFrame{
         tableModel = new DefaultTableModel();
         tableModel.addColumn("ISBN");
         tableModel.addColumn("Title");
+        tableModel.addColumn("Author");
         tableModel.addColumn("Year");
         
         table = new JTable(tableModel);

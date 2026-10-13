@@ -1,11 +1,14 @@
 package Controller;
 
+import Model.AddBookModel;
+import Persistence.LibroDAO;
 import View.AddBookView;
 import View.CreateUserView;
 import View.LibraryView;
 import View.PrestamoView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class LibraryController {
     
@@ -14,6 +17,7 @@ public class LibraryController {
     public LibraryController(){
     
         giveFunctions();
+        addBookLibrary();
     }
     
     private void giveFunctions(){
@@ -50,5 +54,25 @@ public class LibraryController {
                 //ClientTurnController CTController = new ClientTurnController(CTView, 3);
             }
         });      
+    }
+    
+    private void addBookLibrary(){
+    
+        LibroDAO lDAO = new LibroDAO();
+        
+        List<AddBookModel> books = lDAO.ListaLibro("");
+        
+        LView.tableModel.setRowCount(0);
+        
+        for(AddBookModel book : books){
+        
+            LView.tableModel.addRow(new Object[]{
+            
+                book.getbookCode(),
+                book.getbookName(),
+                book.getbookAuthor(),
+                book.getbookYear()
+            });
+        }
     }
 }
