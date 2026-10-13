@@ -21,8 +21,8 @@ public class usuarioDAO {
         try (Connection conn = BDConnection.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, user.getUsername());
-            ps.setInt(2, user.getIdentification());
+            ps.setInt(1, user.getIdentification());
+            ps.setString(2, user.getUsername());
             ps.setString(3, user.getEmail());
             ps.setString(4, user.getStatus());
             
