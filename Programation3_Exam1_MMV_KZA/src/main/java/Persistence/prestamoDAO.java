@@ -22,33 +22,47 @@ public class prestamoDAO {
     usuarioDAO usuario=new usuarioDAO();
     ejemplarDAO ejemplar=new ejemplarDAO();
     
-    public void AgregarPrestamo(PrestamoModel p) {
+    public boolean AgregarPrestamo(PrestamoModel p) {
 
-        String sql = "INSERT INTO prestamo (id, ejemplar_codigo, usuario_id, estado, fecha_prestamo, fecha_limite, fecha_devolucion) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO prestamo (ejemplar_codigo, usuario_id, estado, fecha_prestamo, fecha_limite, fecha_devolucion) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = BDConnection.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, p.getPrestamoCode());
-            ps.setString(2, p.getBookCode().getCodigoEjemplar());
-            ps.setInt(3, p.getUserCode().getIdentification());
-            ps.setString(4, p.getState());
-            ps.setDate(5, p.getPrestamoDate());
-            ps.setDate(6, p.getLimitDate());
-            ps.setDate(7, p.getReturnDate());
+            
+            ps.setString(1, p.getBookCode().getCodigoEjemplar());
+            ps.setInt(2, p.getUserCode().getIdentification());
+            ps.setString(3, p.getState());
+            ps.setDate(4, p.getPrestamoDate());
+            ps.setDate(5, p.getLimitDate());
+            ps.setDate(6, p.getReturnDate());
             
 
             int result = ps.executeUpdate();
 
-            if(result > 0){System.out.println("Loan Successfully Added");}
-            //return true;
+            if(result > 0){
+                
+                System.out.println("Loan Successfully Added");
+                
+                if(p.getState().equalsIgnoreCase("Activo")){
+                
+                    String sqlEjemplar = "UPDATE ejemplar SET estado = 'Prestado' WHERE codigo = ?";
+                    
+                    try(PreparedStatement ps2 = conn.prepareStatement(sqlEjemplar)){
+                    
+                        ps2.setString(1, p.getBookCode().getCodigoEjemplar());
+                        ps2.executeUpdate();
+                    }
+                }
+            }
+            return result > 0;
 
         } catch (Exception e) {
 
             System.out.println("Error al guardar el prestamo");
             e.printStackTrace();
 
-            //return false;
+            return false;
         }
     }
     public void BorrarPrestamo(int prestamoCode) throws SQLException {
@@ -86,6 +100,7 @@ public class prestamoDAO {
              ps.setDate(4, p.getPrestamoDate());
               ps.setDate(5, p.getLimitDate());
                ps.setDate(6, p.getReturnDate());
+               ps.setInt(7, p.getPrestamoCode());
            
             
             int filas = ps.executeUpdate();
@@ -128,6 +143,9 @@ public class prestamoDAO {
                 p.setBookCode(libro);
                 p.setUserCode(user);
                 p.setState(rs.getString("estado"));
+                p.setPrestamoDate(rs.getDate("fecha_prestamo"));
+                p.setLimitDate(rs.getDate("fecha_limite"));
+                p.setReturnDate(rs.getDate("fecha_devolucion"));
 
                 lista.add(p);
             }
