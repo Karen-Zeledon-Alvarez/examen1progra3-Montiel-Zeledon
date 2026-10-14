@@ -1,7 +1,7 @@
 package Controller;
 
 import Model.AddBookModel;
-import Persistence.LibroDAO;
+import Persistence.libroDAO;
 import View.AddBookView;
 import View.CreateUserView;
 import View.LibraryView;
@@ -58,7 +58,7 @@ public class LibraryController {
     
     private void addBookLibrary(){
     
-        LibroDAO lDAO = new LibroDAO();
+        libroDAO lDAO = new libroDAO();
         
         List<AddBookModel> books = lDAO.ListaLibro("");
         

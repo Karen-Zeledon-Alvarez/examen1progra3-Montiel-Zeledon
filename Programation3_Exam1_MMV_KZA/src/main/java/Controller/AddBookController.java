@@ -1,7 +1,7 @@
 package Controller;
 
 import Model.AddBookModel;
-import Persistence.LibroDAO;
+import Persistence.libroDAO;
 import Validations.ValidacionesText;
 import View.AddBookView;
 import View.CreateUserView;
@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 public class AddBookController {
     
     AddBookView ABView = new AddBookView();
-    LibroDAO lDao = new LibroDAO();
+    libroDAO lDao = new libroDAO();
     
     public AddBookController(){
     

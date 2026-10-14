@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author karen
  */
-public class LibroDAO {
+public class libroDAO {
     
     public void AgregarLibro(AddBookModel book) {//Intenta Agregrar 2 Veces un mismo libro
 

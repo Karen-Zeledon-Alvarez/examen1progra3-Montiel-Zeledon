@@ -52,7 +52,7 @@ public class PrestamoView extends JFrame{
     
     private void createLabel(){
     
-        JLabel lbTitle = new JLabel("Add a Book");
+        JLabel lbTitle = new JLabel("Add a Book for loan");
         lbTitle.setBounds(150, 30, 150, 30);
         lbTitle.setFont(new Font("Times New Roman", 3, 18));
         panel.add(lbTitle);

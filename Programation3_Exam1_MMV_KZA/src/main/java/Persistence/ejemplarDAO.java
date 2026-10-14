@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class ejemplarDAO {
     
-    LibroDAO books = new LibroDAO();
+    libroDAO books = new libroDAO();
     
     public void AgregarEjemplar(BookManager ejemplar) {
 
