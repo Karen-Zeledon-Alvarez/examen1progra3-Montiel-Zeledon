@@ -94,13 +94,13 @@ public class libroDAO {
 
         List<AddBookModel> lista = new ArrayList<>();
 
-        String sql = "SELECT * FROM libro WHERE LOWER(titulo) LIKE LOWER(?)";
+        String sql = "SELECT * FROM libro WHERE LOWER(titulo) LIKE LOWER(?) OR LOWER(titulo) LIKE LOWER(?)";
 
         try (Connection conn = BDConnection.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, "%" + texto + "%");
-
+             ps.setString(2, "%" + texto + "%");
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {

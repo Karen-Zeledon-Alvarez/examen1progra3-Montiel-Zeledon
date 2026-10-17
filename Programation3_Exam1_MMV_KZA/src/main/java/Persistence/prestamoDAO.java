@@ -65,7 +65,7 @@ public class prestamoDAO {
             return false;
         }
     }
-    public void BorrarPrestamo(int prestamoCode) throws SQLException {
+    public boolean BorrarPrestamo(int prestamoCode)  {
         
         String sql = "DELETE FROM prestamo WHERE id = ?";
         
@@ -73,46 +73,41 @@ public class prestamoDAO {
               PreparedStatement ps = conn.prepareStatement(sql)){               
                                           
             ps.setInt(1, prestamoCode);
-            int filas = ps.executeUpdate();
-            
-            if(filas > 0){System.out.println("Loan Successfully Deleted.");}
-            //return filas > 0;
+            return ps.executeUpdate() > 0;
         }
          catch(Exception e){
             System.out.println("Error al intentar borrar el prestamo" + e.getMessage());
             e.printStackTrace();
-            //return false;
+            return false;
          }
         
     }
     
-    public void ModificarPrestamo(PrestamoModel p) throws SQLException{
+    public boolean ModificarPrestamo(PrestamoModel p){
+
+    String sql = "UPDATE prestamo SET ejemplar_codigo = ?, "
+            + "usuario_id = ?, estado = ?, fecha_prestamo = ?, "
+            + "fecha_limite = ?, fecha_devolucion = ? WHERE id = ?";
+
+    try (Connection conn = BDConnection.conectar();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, p.getBookCode().getCodigoEjemplar());
+        ps.setInt(2, p.getUserCode().getIdentification());
+        ps.setString(3, p.getState());
+        ps.setDate(4, p.getPrestamoDate());
+        ps.setDate(5, p.getLimitDate());
+        ps.setDate(6, p.getReturnDate());
+        ps.setInt(7, p.getPrestamoCode());
+
+        return ps.executeUpdate() > 0;
         
-        String sql = "UPDATE prestamo SET ejemplar_codigo = ?, usuario_id = ?, estado = ?, fecha_prestamo = ?, fecha_limite = ?, fecha_devolucion = ? WHERE id = ?";
-        
-        try(Connection conn = BDConnection.conectar();
-                
-           PreparedStatement ps = conn.prepareStatement(sql)){
-            
-            ps.setString(1, p.getBookCode().getCodigoEjemplar());
-            ps.setInt(2, p.getUserCode().getIdentification());
-            ps.setString(3, p.getState());
-             ps.setDate(4, p.getPrestamoDate());
-              ps.setDate(5, p.getLimitDate());
-               ps.setDate(6, p.getReturnDate());
-               ps.setInt(7, p.getPrestamoCode());
-           
-            
-            int filas = ps.executeUpdate();
-            if(filas > 0){System.out.println("Loan Successfully updated.");}
-            //return filas > 0;
-              
-           }catch(SQLException e){
-            System.out.println("Ocurrio un error al actualizar el prestamo,  porfavor intente de nuevo" + e.getMessage());
+        }catch(SQLException e){
+            System.out.println("Ocurrio un error al actualizar el ejemplar,  porfavor intente de nuevo" + e.getMessage());
             e.printStackTrace();
-            //return false;
-        }
+            return false;
     }
+}
     
     public List<PrestamoModel> ListaPrestamo(String texto) {
 
@@ -158,7 +153,6 @@ public class prestamoDAO {
 
         return lista;
     }
-
     
     public PrestamoModel ObtenerPrestamo(int prestamoCode){
         String sql = "SELECT id, ejemplar_codigo, usuario_id, estado, fecha_prestamo, fecha_limite, fecha_devolucion FROM prestamo WHERE id = ?";

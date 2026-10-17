@@ -25,4 +25,9 @@ public class AddBookModel {
     
     public void setbookYear(int bookYear_){this.bookYear = bookYear_;}
     public int getbookYear(){return bookYear;}
+    
+    @Override
+    public String toString() {
+    return bookName;
+    }
 }

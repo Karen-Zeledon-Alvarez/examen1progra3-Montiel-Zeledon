@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class usuarioDAO {
     
-    public void AgregarUsuario(CreateUserModel user) {
+    public boolean AgregarUsuario(CreateUserModel user) {
 
         String sql = "INSERT INTO usuario (identificacion, nombre, correo, activo) VALUES (?, ?, ?, ?)";
 
@@ -30,17 +30,17 @@ public class usuarioDAO {
             int result = ps.executeUpdate();
 
             if(result > 0){System.out.println("User successfully added.");}
-            //return true;
+            return true;
 
         } catch (Exception e) {
 
             System.out.println("Error al guardar usuario");
             e.printStackTrace();
 
-            //return false;
+           return false;
         }
     }
-    public void BorrarUsuario(int identificacion) throws SQLException {
+    public boolean BorrarUsuario(int identificacion) {
         
         String sql = "DELETE FROM usuario WHERE identificacion = ?";
 
@@ -48,21 +48,20 @@ public class usuarioDAO {
               PreparedStatement ps = conn.prepareStatement(sql)){               
                                           
             ps.setInt(1, identificacion);
-            int filas = ps.executeUpdate();
+             return ps.executeUpdate()>0;
             
-            if(filas > 0){System.out.println("User successfully deleted.");}
-            //return filas > 0;
+           
             
         }
          catch(Exception e){
             System.out.println("Error al intentar borrar el usuario" + e.getMessage());
             e.printStackTrace();
-            //return false;
+            return false;
          }
         
     }
     
-    public void ModificarUsuario(CreateUserModel user) throws SQLException{
+    public boolean ModificarUsuario(CreateUserModel user) throws SQLException{
         
         String sql = "UPDATE usuario SET nombre = ?, correo = ?, activo = ? WHERE identificacion = ?";
         
@@ -73,17 +72,16 @@ public class usuarioDAO {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getStatus());
-           
+           ps.setInt(4, user.getIdentification());
             
-            int filas = ps.executeUpdate();
+            return ps.executeUpdate()>0;
             
-            if(filas > 0){System.out.println("User successfully updated");}
-            //return filas > 0;
+            
               
            }catch(SQLException e){
             System.out.println("Ocurrio un error al actualizar el usuario,  porfavor intente de nuevo" + e.getMessage());
             e.printStackTrace();
-            //return false;
+            return false;
         }
     }
     

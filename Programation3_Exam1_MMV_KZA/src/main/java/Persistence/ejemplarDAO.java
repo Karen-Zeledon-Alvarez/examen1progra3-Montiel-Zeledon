@@ -18,7 +18,7 @@ public class ejemplarDAO {
     
     libroDAO books = new libroDAO();
     
-    public void AgregarEjemplar(BookManager ejemplar) {
+    public boolean AgregarEjemplar(BookManager ejemplar) {
 
         String sql = "INSERT INTO ejemplar (codigo, libro_isbn, estado) VALUES (?, ?, ?)";
 
@@ -32,17 +32,17 @@ public class ejemplarDAO {
             int result = ps.executeUpdate();
 
             if(result > 0){System.out.println("Example Successfully added.");}
-            //return true;
+            return true;
 
         } catch (Exception e) {
 
             System.out.println("Error al guardar el Ejemplar");
             e.printStackTrace();
 
-            //return false;
+            return false;
         }
     }
-    public void BorrarEjemplar(String Code) throws SQLException {
+    public boolean BorrarEjemplar(String Code) {
         
         String sql = "DELETE FROM ejemplar WHERE codigo = ?";
         
@@ -50,21 +50,20 @@ public class ejemplarDAO {
               PreparedStatement ps = conn.prepareStatement(sql)){               
                                           
             ps.setString(1, Code);
-            int filas = ps.executeUpdate();
             
-            if(filas > 0){System.out.println("Example Successfully deleted.");}
-            //return filas > 0;
+            return ps.executeUpdate()>0;
+            
             
         }
          catch(Exception e){
             System.out.println("Error al intentar borrar el ejemplar" + e.getMessage());
             e.printStackTrace();
-            //return false;
+            return false;
          }
         
     }
     
-    public void ModificarEjemplar(BookManager ejemplar) throws SQLException{
+    public boolean ModificarEjemplar(BookManager ejemplar){
         
         String sql = "UPDATE ejemplar SET libro_isbn = ?, estado = ? WHERE codigo = ?";
         
@@ -72,20 +71,18 @@ public class ejemplarDAO {
                 
            PreparedStatement ps = conn.prepareStatement(sql)){
             
-            ps.setString(1, ejemplar.getCodigoEjemplar());
-            ps.setString(2, ejemplar.getLibro().getbookCode());
-            ps.setString(3, ejemplar.getEstado());
+            ps.setString(1, ejemplar.getLibro().getbookCode());
+            ps.setString(2, ejemplar.getEstado());
+            ps.setString(3, ejemplar.getCodigoEjemplar());
            
             
-            int filas = ps.executeUpdate();
-            
-            if(filas > 0){System.out.println("Example Successfully Updated.");}
-            //return filas > 0;
+           return ps.executeUpdate()>0;
+           
               
            }catch(SQLException e){
             System.out.println("Ocurrio un error al actualizar el ejemplar,  porfavor intente de nuevo" + e.getMessage());
             e.printStackTrace();
-            //return false;
+            return false;
         }
     }
     
@@ -151,5 +148,35 @@ public class ejemplarDAO {
         } catch (Exception e){System.out.println("Error de consulta del Ejemplar: "+ e.getMessage());}
         return null;
     }
-    
+    public List<BookManager> ListarEjemplaresDisponibles() {
+    List<BookManager> lista = new ArrayList<>();
+
+    String sql = "SELECT codigo, libro_isbn, estado "
+               + "FROM ejemplar WHERE estado = 'Disponible'";
+
+    try (Connection conn = BDConnection.conectar();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            String codigoLibro = rs.getString("libro_isbn");
+            AddBookModel libro = books.ObtenerLibro(codigoLibro);
+
+            BookManager ejemplar = new BookManager(
+                rs.getString("codigo"),
+                libro,
+                rs.getString("estado")
+            );
+
+            lista.add(ejemplar);
+        }
+
+    } catch (SQLException e) {
+        System.out.println(
+            "Error al listar ejemplares disponibles: " + e.getMessage()
+        );
+    }
+
+    return lista;
+}
 }
