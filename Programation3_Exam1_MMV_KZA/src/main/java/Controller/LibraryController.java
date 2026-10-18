@@ -33,22 +33,16 @@ public class LibraryController {
     private void giveFunctions() {
 
         // Registrar libros
-        LView.btnAddBook.addActionListener(e -> {
-            new AddBookController();
-        });
+        LView.btnAddBook.addActionListener(e -> {new AddBookController();LView.setVisible(false);LView.dispose();});
 
         // Administrar ejemplares
         LView.btnBookCopies.addActionListener(e -> abrirEjemplares());
 
         // Préstamos
-        LView.btnPrestamo.addActionListener(e -> {
-            new PrestamoController();
-        });
+        LView.btnPrestamo.addActionListener(e -> {new PrestamoController();LView.setVisible(false);LView.dispose();});
 
         // Crear usuarios
-        LView.btnCreateUser.addActionListener(e -> {
-            new CreateUserController();
-        });
+        LView.btnCreateUser.addActionListener(e -> {new CreateUserController();LView.setVisible(false);LView.dispose();});
 
         // Buscar libros
         LView.btnBuscar.addActionListener(e -> {
@@ -88,14 +82,10 @@ private void abrirEjemplares() {
 
     List<AddBookModel> libros = lDAO.ListaLibro("");
 
-    if (libros == null || libros.isEmpty()) {
-        JOptionPane.showMessageDialog(
-            LView,
-            "Primero debes registrar un libro."
-        );
-        return;
-    }
+    if (libros == null || libros.isEmpty()) {JOptionPane.showMessageDialog(LView, "Primero debes registrar un libro."); return;}
 
+    LView.setVisible(false);
+    LView.dispose();
     BookCopiesView copiesView = new BookCopiesView(libros);
     new BookCopiesController(copiesView);
 }

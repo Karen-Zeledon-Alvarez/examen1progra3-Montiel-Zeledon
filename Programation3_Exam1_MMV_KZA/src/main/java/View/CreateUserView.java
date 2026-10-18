@@ -63,7 +63,7 @@ public class CreateUserView extends JFrame {
         btnModificar = new JButton("Modificar");
         btnEliminar = new JButton("Eliminar");
         btnLimpiar = new JButton("Limpiar");
-        btnReturn = new JButton("Regresar");
+        btnReturn = new JButton("Return");
         btnBuscar = new JButton("Buscar");
         btnMostrarTodos = new JButton("Mostrar todos");
 

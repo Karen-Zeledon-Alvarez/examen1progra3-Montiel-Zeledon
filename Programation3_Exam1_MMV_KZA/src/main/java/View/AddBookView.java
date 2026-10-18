@@ -28,7 +28,6 @@ public class AddBookView extends JFrame{
         setTitle("Add Book");
         setResizable(false);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
     }
     

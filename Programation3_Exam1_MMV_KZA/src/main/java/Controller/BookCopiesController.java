@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Controller;
 import Model.BookManager;
 import View.BookCopiesView;
@@ -35,6 +31,7 @@ public class BookCopiesController {
         vista.btnModificar.addActionListener(e -> modificar());
         vista.btnEliminar.addActionListener(e -> eliminar());
         vista.btnLimpiar.addActionListener(e -> limpiar());
+        vista.btnReturn.addActionListener(e-> {new LibraryController(); vista.setVisible(false); vista.dispose();});
 
         vista.txtBuscar.addActionListener(e -> consultar());
 

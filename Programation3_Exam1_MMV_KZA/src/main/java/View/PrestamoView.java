@@ -36,6 +36,8 @@ public class PrestamoView extends JFrame {
     public JButton btnReturn;
     public JButton btnBuscar;
     public JButton btnMostrarTodos;
+    public JButton btnPagarMulta;
+    public JButton btnDeudores;
 
     public JTable tblPrestamos;
     public DefaultTableModel modeloTabla;
@@ -105,6 +107,8 @@ public class PrestamoView extends JFrame {
         btnReturn = new JButton("Regresar");
         btnBuscar = new JButton("Buscar");
         btnMostrarTodos = new JButton("Mostrar todos");
+        btnPagarMulta = new JButton("Pagar multa");
+        btnDeudores = new JButton("Ver deudores");
 
         modeloTabla = new DefaultTableModel(
             new Object[]{
@@ -114,7 +118,8 @@ public class PrestamoView extends JFrame {
                 "Estado",
                 "Fecha préstamo",
                 "Fecha límite",
-                "Fecha devolución"
+                "Fecha devolución",
+                "Multa"
             }, 0
         ) {
             @Override
@@ -194,6 +199,8 @@ public class PrestamoView extends JFrame {
         panelBotones.add(btnModificar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnLimpiar);
+        panelBotones.add(btnPagarMulta);
+        panelBotones.add(btnDeudores);
 
         JPanel panelSuperior = new JPanel(new BorderLayout(5, 5));
         panelSuperior.add(panelFormulario, BorderLayout.CENTER);

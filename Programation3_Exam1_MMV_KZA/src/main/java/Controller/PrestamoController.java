@@ -2,6 +2,7 @@ package Controller;
 
 import Model.BookManager;
 import Model.CreateUserModel;
+import Model.MultaPendienteException;
 import Model.PrestamoModel;
 import Persistence.ejemplarDAO;
 import Persistence.prestamoDAO;
@@ -39,6 +40,8 @@ public class PrestamoController {
         vista.btnModificar.addActionListener(e -> modificar());
         vista.btnEliminar.addActionListener(e -> eliminar());
         vista.btnLimpiar.addActionListener(e -> limpiar());
+        vista.btnPagarMulta.addActionListener(e -> pagarMulta());
+        vista.btnDeudores.addActionListener(e -> mostrarDeudores());
 
         vista.btnBuscar.addActionListener(e ->
             cargarPrestamos(vista.txtBuscar.getText().trim())
@@ -68,17 +71,11 @@ public class PrestamoController {
 
     private void agregar() {
         String idUsuario = vista.txtUCode.getText().trim();
-        BookManager ejemplar =
-            (BookManager) vista.cmbEjemplares.getSelectedItem();
+        BookManager ejemplar = (BookManager) vista.cmbEjemplares.getSelectedItem();
 
-            if (ejemplar == null) {
-                mostrarMensaje("Seleccione un ejemplar disponible.");
-            return;
-        }
+            if (ejemplar == null) {mostrarMensaje("Seleccione un ejemplar disponible.");return;}
 
-        if (!validarDatos(idUsuario)) {
-            return;
-        }
+        if (!validarDatos(idUsuario)) {return;}
 
         try {
             int id = Integer.parseInt(idUsuario);
@@ -86,40 +83,29 @@ public class PrestamoController {
             CreateUserModel usuario = uDao.ObtenerUsuario(id);
            
 
-            if (usuario == null) {
-                mostrarMensaje("El usuario no existe.");
+            if (usuario == null) {mostrarMensaje("El usuario no existe.");return;}
+
+            // RN-N2: un usuario con multas sin pagar no puede pedir préstamos
+            double pendiente = pDao.TotalMultasPendientes(id);
+            
+            if (pendiente > 0) {throw new MultaPendienteException(
+                    "El usuario tiene multas pendientes por ₡" + (long) pendiente
+                    + ". Debe pagarlas antes de solicitar un préstamo.");
+            }
+
+            if (ejemplar == null) {mostrarMensaje("El ejemplar no existe.");return;}
+
+            if (vista.prestamoDate.getDate() == null || vista.limiteDate.getDate() == null) {
+
+                mostrarMensaje("Seleccione la fecha del préstamo y la fecha límite.");
                 return;
             }
 
-            if (ejemplar == null) {
-                mostrarMensaje("El ejemplar no existe.");
-                return;
-            }
+            Date fechaPrestamo = convertirFecha(vista.prestamoDate.getDate());
+            Date fechaLimite = convertirFecha(vista.limiteDate.getDate());
+            Date fechaDevolucion = vista.devolucionDate.getDate() == null ? null : convertirFecha(vista.devolucionDate.getDate());
 
-            if (vista.prestamoDate.getDate() == null
-                    || vista.limiteDate.getDate() == null) {
-                mostrarMensaje(
-                    "Seleccione la fecha del préstamo y la fecha límite."
-                );
-                return;
-            }
-
-            Date fechaPrestamo = convertirFecha(
-                vista.prestamoDate.getDate()
-            );
-
-            Date fechaLimite = convertirFecha(
-                vista.limiteDate.getDate()
-            );
-
-            Date fechaDevolucion = vista.devolucionDate.getDate() == null
-                ? null
-                : convertirFecha(vista.devolucionDate.getDate());
-
-            if (!validarFechas(
-                    fechaPrestamo, fechaLimite, fechaDevolucion)) {
-                return;
-            }
+            if (!validarFechas(fechaPrestamo, fechaLimite, fechaDevolucion)) {return;}
 
             String estado = obtenerEstado();
 
@@ -130,16 +116,13 @@ public class PrestamoController {
             prestamo.setLimitDate(fechaLimite);
             prestamo.setReturnDate(fechaDevolucion);
             prestamo.setState(estado);
+            prestamo.calcularMulta(); // RN-N1
 
-            if (pDao.AgregarPrestamo(prestamo)) {
-                mostrarMensaje("Préstamo registrado correctamente.");
-                limpiar();
-            } else {
-                mostrarMensaje(
-                    "No se pudo registrar el préstamo."
-                );
-            }
+            if (pDao.AgregarPrestamo(prestamo)) {mostrarMensaje("Préstamo registrado correctamente.");limpiar();}
+            else {mostrarMensaje("No se pudo registrar el préstamo.");}
 
+        } catch (MultaPendienteException ex) {
+            mostrarMensaje(ex.getMessage());
         } catch (NumberFormatException ex) {
             mostrarMensaje("El ID del usuario debe ser numérico.");
         }
@@ -246,6 +229,13 @@ public class PrestamoController {
                 fechaDevolucion
             );
 
+            // RN-N1: recalcular la multa con las fechas actuales
+            prestamo.calcularMulta();
+            // Si la multa no cambió, se conserva su estado de pago
+            prestamo.setMultaPagada(
+                prestamo.getMulta() == existente.getMulta()
+                && existente.getMultaPagada());
+
             pDao.ModificarPrestamo(prestamo);
 
             mostrarMensaje(
@@ -323,7 +313,8 @@ public class PrestamoController {
                 p.getState(),
                 p.getPrestamoDate(),
                 p.getLimitDate(),
-                p.getReturnDate()
+                p.getReturnDate(),
+                formatearMulta(p)
             });
         }
     }
@@ -446,4 +437,67 @@ public class PrestamoController {
 
     vista.cmbEjemplares.setSelectedIndex(-1);
 }
+
+    // ---------- Multas ----------
+
+    private String formatearMulta(PrestamoModel p) {
+        if (p.getMulta() <= 0) {
+            return "₡0";
+        }
+        return "₡" + (long) p.getMulta()
+            + (p.getMultaPagada() ? " (pagada)" : " (pendiente)");
+    }
+
+    // RN-N3: registrar el pago de una multa existente y pendiente
+    private void pagarMulta() {
+        String texto = vista.txtPrestamoCode.getText().trim();
+
+        if (texto.isEmpty()) {
+            mostrarMensaje("Seleccione un préstamo de la tabla.");
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(texto);
+            PrestamoModel prestamo = pDao.ObtenerPrestamo(id);
+
+            if (prestamo == null) {
+                mostrarMensaje("El préstamo no existe.");
+                return;
+            }
+
+            if (prestamo.getMulta() <= 0 || prestamo.getMultaPagada()) {
+                mostrarMensaje("Este préstamo no tiene una multa pendiente.");
+                return;
+            }
+
+            if (pDao.PagarMulta(id)) {
+                mostrarMensaje("Multa de ₡" + (long) prestamo.getMulta()
+                    + " pagada correctamente.");
+                cargarPrestamos("");
+            } else {
+                mostrarMensaje("No se pudo registrar el pago.");
+            }
+        } catch (NumberFormatException ex) {
+            mostrarMensaje("El número del préstamo no es válido.");
+        }
+    }
+
+    // Consulta nueva: usuarios con multas pendientes y total adeudado
+    private void mostrarDeudores() {
+        List<Object[]> deudores = pDao.ListarUsuariosConMultas();
+
+        if (deudores.isEmpty()) {
+            mostrarMensaje("No hay usuarios con multas pendientes.");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder("Usuarios con multas pendientes:\n\n");
+        for (Object[] fila : deudores) {
+            sb.append("ID usuario ").append(fila[0])
+              .append("  →  ₡").append(((Double) fila[1]).longValue())
+              .append("\n");
+        }
+        mostrarMensaje(sb.toString());
+    }
 }

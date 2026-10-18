@@ -38,7 +38,7 @@ public class CreateUserController {
             cargarUsuarios("");
         });
 
-        vista.btnReturn.addActionListener(e -> vista.dispose());
+        vista.btnReturn.addActionListener(e -> {vista.dispose(); new LibraryController();});
 
         vista.tblUsuarios.getSelectionModel()
             .addListSelectionListener(e -> {

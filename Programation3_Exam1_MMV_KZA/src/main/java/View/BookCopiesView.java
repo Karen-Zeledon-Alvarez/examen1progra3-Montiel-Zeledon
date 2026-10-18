@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package View;
 import Model.AddBookModel;
 import javax.swing.*;
@@ -13,7 +9,7 @@ import java.util.List;
  * @author karen
  */
 public class BookCopiesView extends JFrame {
-
+    
     public JTextField txtCodigo;
     public JComboBox<AddBookModel> cmbLibro;
     public JComboBox<String> cmbEstado;
@@ -24,6 +20,7 @@ public class BookCopiesView extends JFrame {
     public JButton btnModificar;
     public JButton btnEliminar;
     public JButton btnLimpiar;
+    public JButton btnReturn;
 
     public JTable tblCopias;
     public DefaultTableModel modeloTabla;
@@ -80,17 +77,25 @@ public class BookCopiesView extends JFrame {
         busqueda.add(txtBuscar);
         busqueda.add(btnConsultar);
 
-        JPanel botones = new JPanel(new FlowLayout());
+        JPanel botones = new JPanel(new BorderLayout());
 
         btnAgregar = new JButton("Agregar");
         btnModificar = new JButton("Modificar");
         btnEliminar = new JButton("Eliminar");
         btnLimpiar = new JButton("Limpiar");
+        btnReturn = new JButton("Return");
+        
+        JPanel panelIzquierda = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panelIzquierda.add(btnReturn);
 
-        botones.add(btnAgregar);
-        botones.add(btnModificar);
-        botones.add(btnEliminar);
-        botones.add(btnLimpiar);
+        JPanel panelCentro = new JPanel(new FlowLayout());
+        panelCentro.add(btnAgregar);
+        panelCentro.add(btnModificar);
+        panelCentro.add(btnEliminar);
+        panelCentro.add(btnLimpiar);
+
+        botones.add(panelIzquierda, BorderLayout.WEST);
+        botones.add(panelCentro, BorderLayout.CENTER);
 
         JPanel superior = new JPanel(new BorderLayout(8, 8));
         superior.add(formulario, BorderLayout.CENTER);
