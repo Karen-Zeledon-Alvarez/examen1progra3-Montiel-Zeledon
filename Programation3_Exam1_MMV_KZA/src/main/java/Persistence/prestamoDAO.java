@@ -26,9 +26,7 @@ public class prestamoDAO {
 
         String sql = "INSERT INTO prestamo (ejemplar_codigo, usuario_id, estado, fecha_prestamo, fecha_limite, fecha_devolucion, multa, multa_pagada) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = BDConnection.conectar();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
+        try (Connection conn = BDConnection.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setString(1, p.getBookCode().getCodigoEjemplar());
             ps.setInt(2, p.getUserCode().getIdentification());
@@ -37,9 +35,8 @@ public class prestamoDAO {
             ps.setDate(5, p.getLimitDate());
             ps.setDate(6, p.getReturnDate());
             ps.setDouble(7, p.getMulta());
-            ps.setBoolean(8, p.getMultaPagada());
+            ps.setString(8, p.getMultaPagada() ? "Si" : "No");
             
-
             int result = ps.executeUpdate();
 
             if(result > 0){
@@ -59,29 +56,18 @@ public class prestamoDAO {
             }
             return result > 0;
 
-        } catch (Exception e) {
-
-            System.out.println("Error al guardar el prestamo");
-            e.printStackTrace();
-
-            return false;
-        }
+        } catch (Exception e) {System.out.println("Error al guardar el prestamo"); e.printStackTrace(); return false;}
     }
     public boolean BorrarPrestamo(int prestamoCode)  {
         
         String sql = "DELETE FROM prestamo WHERE id = ?";
         
-        try (Connection conn = BDConnection.conectar();
-              PreparedStatement ps = conn.prepareStatement(sql)){               
+        try (Connection conn = BDConnection.conectar(); PreparedStatement ps = conn.prepareStatement(sql)){               
                                           
             ps.setInt(1, prestamoCode);
             return ps.executeUpdate() > 0;
         }
-         catch(Exception e){
-            System.out.println("Error al intentar borrar el prestamo" + e.getMessage());
-            e.printStackTrace();
-            return false;
-         }
+         catch(Exception e){System.out.println("Error al intentar borrar el prestamo" + e.getMessage()); e.printStackTrace(); return false;}
         
     }
     
@@ -92,8 +78,7 @@ public class prestamoDAO {
             + "fecha_limite = ?, fecha_devolucion = ?, "
             + "multa = ?, multa_pagada = ? WHERE id = ?";
 
-    try (Connection conn = BDConnection.conectar();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+    try (Connection conn = BDConnection.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
         ps.setString(1, p.getBookCode().getCodigoEjemplar());
         ps.setInt(2, p.getUserCode().getIdentification());
@@ -102,16 +87,17 @@ public class prestamoDAO {
         ps.setDate(5, p.getLimitDate());
         ps.setDate(6, p.getReturnDate());
         ps.setDouble(7, p.getMulta());
-        ps.setBoolean(8, p.getMultaPagada());
+        ps.setString(8, p.getMultaPagada() ? "Si" : "No");
         ps.setInt(9, p.getPrestamoCode());
 
         return ps.executeUpdate() > 0;
         
         }catch(SQLException e){
-            System.out.println("Ocurrio un error al actualizar el ejemplar,  porfavor intente de nuevo" + e.getMessage());
+            
+            System.out.println("Ocurrio un error al actualizar el ejemplar, porfavor intente de nuevo" + e.getMessage());
             e.printStackTrace();
             return false;
-    }
+        }
 }
     
     public List<PrestamoModel> ListaPrestamo(String texto) {
@@ -121,8 +107,7 @@ public class prestamoDAO {
         String sql = "SELECT id, ejemplar_codigo, usuario_id, estado, fecha_prestamo, fecha_limite, fecha_devolucion, multa, multa_pagada FROM prestamo WHERE"
                 + " CAST(id AS CHAR) LIKE ? OR CAST(ejemplar_codigo AS CHAR) LIKE ? OR CAST(usuario_id AS CHAR) LIKE ? OR LOWER(estado) LIKE LOWER(?)";
 
-        try (Connection conn = BDConnection.conectar();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = BDConnection.conectar();PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, "%" + texto + "%");
             ps.setString(2, "%" + texto + "%");
@@ -133,10 +118,10 @@ public class prestamoDAO {
 
             while (rs.next()) {
                 
-                int User=rs.getInt("usuario_id");
-                CreateUserModel user=usuario.ObtenerUsuario(User);
-                String book=rs.getString("ejemplar_codigo");
-                BookManager libro=ejemplar.ObtenerEjemplar(book);
+                int User = rs.getInt("usuario_id");
+                CreateUserModel user = usuario.ObtenerUsuario(User);
+                String book = rs.getString("ejemplar_codigo");
+                BookManager libro = ejemplar.ObtenerEjemplar(book);
                 PrestamoModel p = new PrestamoModel();
 
                 p.setPrestamoCode(rs.getInt("id"));
@@ -147,36 +132,32 @@ public class prestamoDAO {
                 p.setLimitDate(rs.getDate("fecha_limite"));
                 p.setReturnDate(rs.getDate("fecha_devolucion"));
                 p.setMulta(rs.getDouble("multa"));
-                p.setMultaPagada(rs.getBoolean("multa_pagada"));
+                p.setMultaPagada("Si".equalsIgnoreCase(rs.getString("multa_pagada")));
 
                 lista.add(p);
             }
 
-        } catch (Exception e) {
-
-            System.out.println("Error lista prestamos");
-            e.printStackTrace();
-        }
+        } catch (Exception e) {System.out.println("Error lista prestamos"); e.printStackTrace();}
 
         return lista;
     }
     
     public PrestamoModel ObtenerPrestamo(int prestamoCode){
+        
         String sql = "SELECT id, ejemplar_codigo, usuario_id, estado, fecha_prestamo, fecha_limite, fecha_devolucion, multa, multa_pagada FROM prestamo WHERE id = ?";
         
-        try(Connection conn = BDConnection.conectar();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try(Connection conn = BDConnection.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
             
            ps.setInt(1, prestamoCode);
            
-            try (ResultSet rs=ps.executeQuery()){
+            try (ResultSet rs = ps.executeQuery()){
                 
                 if (rs.next()){
                     
-                    int User=rs.getInt("usuario_id");
-                    CreateUserModel user=usuario.ObtenerUsuario(User);
-                    String book=rs.getString("ejemplar_codigo");
-                    BookManager libro=ejemplar.ObtenerEjemplar(book);
+                    int User = rs.getInt("usuario_id");
+                    CreateUserModel user = usuario.ObtenerUsuario(User);
+                    String book = rs.getString("ejemplar_codigo");
+                    BookManager libro = ejemplar.ObtenerEjemplar(book);
                 
                     PrestamoModel p = new PrestamoModel(
                         rs.getInt("id"),
@@ -187,63 +168,57 @@ public class prestamoDAO {
                         rs.getDate("fecha_limite"),
                         rs.getDate("fecha_devolucion"));
                     p.setMulta(rs.getDouble("multa"));
-                    p.setMultaPagada(rs.getBoolean("multa_pagada"));
+                    p.setMultaPagada("Si".equalsIgnoreCase(rs.getString("multa_pagada")));
+                    
                     return p;
                     }
                 }
  
-        } catch (Exception e){
-            System.out.println("Error de consulta del prestamo: "+ e.getMessage());
-        }
+        } catch (Exception e){System.out.println("Error de consulta del prestamo: "+ e.getMessage());}
+        
         return null;
     }
 
-    // RN-N2: total de multas sin pagar de un usuario
     public double TotalMultasPendientes(int usuarioId) {
-        String sql = "SELECT COALESCE(SUM(multa), 0) FROM prestamo "
-                   + "WHERE usuario_id = ? AND multa > 0 AND multa_pagada = FALSE";
-        try (Connection conn = BDConnection.conectar();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        
+        String sql = "SELECT COALESCE(SUM(multa), 0) FROM prestamo WHERE usuario_id = ? AND multa > 0 AND multa_pagada = 'No'";
+        
+        try (Connection conn = BDConnection.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+           
             ps.setInt(1, usuarioId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getDouble(1);
-            }
-        } catch (Exception e) {
-            System.out.println("Error al consultar multas: " + e.getMessage());
-        }
+            
+            try (ResultSet rs = ps.executeQuery()) {if (rs.next()) return rs.getDouble(1);}
+            } catch (Exception e) {System.out.println("Error al consultar multas: " + e.getMessage());}
+        
         return 0;
     }
 
-    // RN-N3: solo paga si existe y está pendiente
     public boolean PagarMulta(int prestamoCode) {
-        String sql = "UPDATE prestamo SET multa_pagada = TRUE "
-                   + "WHERE id = ? AND multa > 0 AND multa_pagada = FALSE";
-        try (Connection conn = BDConnection.conectar();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        
+        String sql = "UPDATE prestamo SET multa_pagada = 'Si' WHERE id = ? AND multa > 0 AND multa_pagada = 'No'";
+        
+        try (Connection conn = BDConnection.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            
             ps.setInt(1, prestamoCode);
             return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            System.out.println("Error al pagar la multa: " + e.getMessage());
-            return false;
-        }
+            
+        } catch (Exception e) {System.out.println("Error al pagar la multa: " + e.getMessage()); return false;}
     }
 
-    // Consulta nueva: usuarios con multas pendientes y total adeudado
-    // Cada elemento: {usuario_id, total}
     public List<Object[]> ListarUsuariosConMultas() {
+        
         List<Object[]> lista = new ArrayList<>();
+        
         String sql = "SELECT usuario_id, SUM(multa) AS total FROM prestamo "
-                   + "WHERE multa > 0 AND multa_pagada = FALSE "
+                   + "WHERE multa > 0 AND multa_pagada = 'No' "
                    + "GROUP BY usuario_id ORDER BY total DESC";
-        try (Connection conn = BDConnection.conectar();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                lista.add(new Object[]{rs.getInt("usuario_id"), rs.getDouble("total")});
-            }
-        } catch (Exception e) {
-            System.out.println("Error al listar deudores: " + e.getMessage());
-        }
+        
+        try (Connection conn = BDConnection.conectar();PreparedStatement ps = conn.prepareStatement(sql);ResultSet rs = ps.executeQuery()) {
+            
+            while (rs.next()) {lista.add(new Object[]{rs.getInt("usuario_id"), rs.getDouble("total")});}
+            
+        } catch (Exception e) {System.out.println("Error al listar deudores: " + e.getMessage());}
+        
         return lista;
     }
 }

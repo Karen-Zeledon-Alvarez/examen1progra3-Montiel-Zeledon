@@ -57,19 +57,16 @@ public class PrestamoView extends JFrame {
     }
 
     private void createComponents() {
+        
         txtPrestamoCode = new JTextField();
         txtPrestamoCode.setEnabled(false);
 
-        cmbEjemplares = new JComboBox<>();
-          cmbEjemplares.setRenderer(new DefaultListCellRenderer() {
+        cmbEjemplares = new JComboBox<>(); cmbEjemplares.setRenderer(new DefaultListCellRenderer() {
+              
         @Override
-        public java.awt.Component getListCellRendererComponent(
-            JList<?> list, Object value, int index,
-            boolean isSelected, boolean cellHasFocus) {
+        public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-        super.getListCellRendererComponent(
-            list, value, index, isSelected, cellHasFocus
-        );
+        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
         if (value instanceof BookManager) {
             BookManager ejemplar = (BookManager) value;
@@ -77,8 +74,8 @@ public class PrestamoView extends JFrame {
         }
 
         return this;
-        }
-        });  
+        }});  
+        
         txtUCode = new JTextField();
         txtBuscar = new JTextField(15);
 
@@ -123,30 +120,21 @@ public class PrestamoView extends JFrame {
             }, 0
         ) {
             @Override
-            public boolean isCellEditable(int fila, int columna) {
-                return false;
-            }
+            public boolean isCellEditable(int fila, int columna) {return false;}
         };
 
         tblPrestamos = new JTable(modeloTabla);
-        tblPrestamos.setSelectionMode(
-            ListSelectionModel.SINGLE_SELECTION
-        );
+        tblPrestamos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblPrestamos.setAutoCreateRowSorter(true);
         tblPrestamos.setRowHeight(22);
     }
 
     private void createLayout() {
         panelPrincipal = new JPanel(new BorderLayout(10, 10));
-        panelPrincipal.setBorder(
-            BorderFactory.createEmptyBorder(12, 12, 12, 12)
-        );
+        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
         // Encabezado
-        JLabel lbTitulo = new JLabel(
-            "Administración de préstamos",
-            SwingConstants.CENTER
-        );
+        JLabel lbTitulo = new JLabel("Administración de préstamos", SwingConstants.CENTER);
         lbTitulo.setFont(new Font("Arial", Font.BOLD, 22));
 
         JPanel panelTitulo = new JPanel(new BorderLayout(10, 10));
@@ -157,9 +145,7 @@ public class PrestamoView extends JFrame {
 
         // Formulario
         panelFormulario = new JPanel(new GridLayout(0, 4, 8, 8));
-        panelFormulario.setBorder(
-            BorderFactory.createTitledBorder("Datos del préstamo")
-        );
+        panelFormulario.setBorder(BorderFactory.createTitledBorder("Datos del préstamo"));
 
         panelFormulario.add(new JLabel("N.º préstamo:"));
         panelFormulario.add(txtPrestamoCode);
@@ -181,18 +167,14 @@ public class PrestamoView extends JFrame {
 
         panelFormulario.add(new JLabel("Estado:"));
 
-        JPanel panelEstado = new JPanel(
-            new FlowLayout(FlowLayout.LEFT, 5, 0)
-        );
+        JPanel panelEstado = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         panelEstado.add(dButton);
         panelEstado.add(ndButton);
 
         panelFormulario.add(panelEstado);
 
         // Botones de operaciones
-        panelBotones = new JPanel(
-            new FlowLayout(FlowLayout.CENTER, 8, 5)
-        );
+        panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 5));
 
         panelBotones.add(btnAddBook);
         panelBotones.add(btnConsultar);
@@ -207,25 +189,17 @@ public class PrestamoView extends JFrame {
         panelSuperior.add(panelBotones, BorderLayout.SOUTH);
 
         // Búsqueda
-        JPanel panelBusqueda = new JPanel(
-            new FlowLayout(FlowLayout.LEFT, 8, 5)
-        );
-        panelBusqueda.setBorder(
-            BorderFactory.createTitledBorder("Buscar préstamos")
-        );
+        JPanel panelBusqueda = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 5));
+        panelBusqueda.setBorder(BorderFactory.createTitledBorder("Buscar préstamos"));
 
-        panelBusqueda.add(
-            new JLabel("N.º préstamo, ejemplar, usuario o estado:")
-        );
+        panelBusqueda.add(new JLabel("N.º préstamo, ejemplar, usuario o estado:"));
         panelBusqueda.add(txtBuscar);
         panelBusqueda.add(btnBuscar);
         panelBusqueda.add(btnMostrarTodos);
 
         // Tabla
         JScrollPane scrollTabla = new JScrollPane(tblPrestamos);
-        scrollTabla.setBorder(
-            BorderFactory.createTitledBorder("Préstamos registrados")
-        );
+        scrollTabla.setBorder(BorderFactory.createTitledBorder("Préstamos registrados"));
 
         // Distribución central
         JPanel panelCentral = new JPanel(new BorderLayout(8, 8));
@@ -243,6 +217,7 @@ public class PrestamoView extends JFrame {
     }
 
     public void limpiarFormulario() {
+        
         txtPrestamoCode.setText("");
         txtUCode.setText("");
         cmbEjemplares.setSelectedIndex(-1);

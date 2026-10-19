@@ -59,7 +59,6 @@ public class PrestamoModel {
     public boolean getMultaPagada() { return multaPagada; }
     public void setMultaPagada(boolean multaPagada) { this.multaPagada = multaPagada; }
 
-    // RN-N1: calcula la multa según la fecha límite y la de devolución
     public void calcularMulta() {
         
         if (returnDate != null && limitDate != null && returnDate.after(limitDate)) {
