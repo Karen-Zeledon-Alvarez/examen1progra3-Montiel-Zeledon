@@ -67,11 +67,9 @@ public class CreateUserController {
             return;
         }
 
-        String estado = vista.chkActive.isSelected()
-                ? "Activo" : "Inactivo";
+        String estado = vista.chkActive.isSelected()? "Activo" : "Inactivo";
 
-        CreateUserModel usuario =
-            new CreateUserModel(id, nombre, correo, estado);
+        CreateUserModel usuario = new CreateUserModel(id, nombre, correo, estado);
 
         if (dao.AgregarUsuario(usuario)) {
             JOptionPane.showMessageDialog(

@@ -72,6 +72,8 @@ public class PrestamoController {
            
 
             if (usuario == null) {mostrarMensaje("El usuario no existe."); return;}
+            
+            if ("Inactivo".equalsIgnoreCase(usuario.getStatus())) {mostrarMensaje("El usuario se encuentra inactivo y no puede realizar préstamos."); return;}
 
             double pendiente = pDao.TotalMultasPendientes(id);
             
@@ -154,6 +156,8 @@ public class PrestamoController {
             CreateUserModel usuario = uDao.ObtenerUsuario(idUser);
             
             if (usuario == null) {mostrarMensaje("El usuario no existe."); return;}
+            
+            if ("Inactivo".equalsIgnoreCase(usuario.getStatus())) {mostrarMensaje("El usuario se encuentra inactivo y no puede realizar préstamos."); return;}
 
             if (ejemplar == null) {mostrarMensaje("El ejemplar no existe."); return;}
 
