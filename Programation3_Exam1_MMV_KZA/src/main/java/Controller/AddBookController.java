@@ -27,7 +27,16 @@ public class AddBookController {
         
             public void actionPerformed(ActionEvent e){
                 
-                String yearText = ABView.txtAnio.getText();
+                String saveCode = ABView.txtISBN.getText().trim();
+                String saveTitle = ABView.txtTitulo.getText().trim();
+                String saveAuthor = ABView.txtAutor.getText().trim();
+                String yearText = ABView.txtAnio.getText().trim();
+                
+                if(saveCode.isEmpty() || saveTitle.isEmpty() || saveAuthor.isEmpty() || yearText.isEmpty()){
+                    
+                    JOptionPane.showMessageDialog(ABView, "Please, fill all gaps first.", "Validation Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 
                 if (ValidacionesText.soloNumeros(yearText)) {
                 
@@ -56,7 +65,6 @@ public class AddBookController {
                 ABView.setVisible(false);
                 ABView.dispose();
                 LibraryController LController = new LibraryController();
-                //ClientTurnController CTController = new ClientTurnController(CTView, 2);                 
             }
         });    
     }
