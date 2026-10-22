@@ -4,31 +4,34 @@
 
 ## Integración
 
-<Describa el menú final y confirme que todas las funcionalidades operan sobre MySQL.>
+
 
 | Opción del menú | Funcionalidad | Estado |
 |---|---|---|
-| | | ✅ / ⚠️ / ❌ |
+| Permite pagar las multas y consultas cuantas multas pendientes hay y de quien | Cada vez que un prestamo tiene una multa se registra y por dia que pase se suman 200 | ✅  |
 
 ## Cambio de requerimiento
 
 **Cambio solicitado por el docente:**
 
-<texto>
+MULTAS POR ATRASO
 
 **Clases modificadas o agregadas:**
 
 | Clase | Capa | Cambio realizado |
 |---|---|---|
-| | | |
+| MultaPendienteException | Model | clase agregada nurva usar super() |
+| PrestamoModel | modelado | se agregaron las variable double multa, boolean multa pagada y static final double MULTA_POR_DIA |
+| PrestamoDAO | persistencia | double TotalMultasPendientes(int), boolean PagarMulta(int), List<> ListarUsuarioConMultas() |
+| PrestamosController | Controller | string formatearMulta(PrestamoModel), void pagarMulta(), void mostrarDeudores() |
 
 **Análisis:** ¿qué partes del diseño facilitaron el cambio? ¿qué fue necesario rehacer?
 
-<texto>
+no fue necesario rehacer clases solo agregar funciones y variables, haber separado las clases hizo facil agregarle las nuevas funciones y solo se agrego una clase más pero la clase prestamo hizo todo el trabajo
 
 ## Decisiones de diseño relevantes
 
-- <decisión y justificación>
+- Separar lo más posible las clases para hacer escalable el proyecto
 
 ## Pruebas y mejoras
 
@@ -37,14 +40,15 @@
 
 ## UML final
 
-<Indique si el diseño cambió y dónde está el diagrama actualizado (`docs/etapa_1/diagramas/uml_final.png`).>
+\docs\etapa_3\img\Diagrama ER de Biblioteca con Multas.png
 
 ## Aspectos pendientes
 
-- <pendiente>
+- ninguno
 
 ## Distribución del trabajo
 
 | Integrante | Aportes principales |
 |---|---|
-| | |
+| Mauricio Montiel | Controllers iniciales y Views iniciales Multas creacion de la base de datos |
+| Karen Zeledon | Model final, DAO final controller final y view final |
